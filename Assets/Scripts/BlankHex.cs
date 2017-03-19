@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BlankHex : MonoBehaviour {
 
@@ -36,9 +37,9 @@ public class BlankHex : MonoBehaviour {
 	//RaycastHit hit;
 
 	bool selected;//hex position is selected for placement
-	public bool placed;//hex position filled, can no longer be selected
+	bool placed;//hex position filled, can no longer be selected
 
-	GameObject gameManager;
+	static GameObject gameManager;
 	public static int numberOfHexes = 1;
 
 	const float shiftX = 3.75f;
@@ -51,6 +52,61 @@ public class BlankHex : MonoBehaviour {
 	public GameObject adjHex4;//neighbor4;
 	public GameObject adjHex5;//neighbor5;
 	public GameObject adjHex6;//neighbor6;
+
+	public bool roadAt1;//true if there is a road leading out of edge 1
+	public bool roadAt2;
+	public bool roadAt3;
+	public bool roadAt4;
+	public bool roadAt5;
+	public bool roadAt6;
+
+	public bool e1_Borderland;//true if edge 1 road links to the Borderland tile
+	public bool e2_Borderland;
+	public bool e3_Borderland;
+	public bool e4_Borderland;
+	public bool e5_Borderland;
+	public bool e6_Borderland;
+
+	public bool sixClearingTile;//if tile has 6 clearings, this must be true;
+
+	public bool edge1_edge2;//true if there is a road on this hex that leads from edge 1 to edge 2, else false
+	public bool edge1_edge3;
+	public bool edge1_edge4;
+	public bool edge1_edge5;
+	public bool edge1_edge6;
+
+	public bool edge2_edge1;
+	public bool edge2_edge3;
+	public bool edge2_edge4;
+	public bool edge2_edge5;
+	public bool edge2_edge6;
+
+	public bool edge3_edge1;
+	public bool edge3_edge2;
+	public bool edge3_edge4;
+	public bool edge3_edge5;
+	public bool edge3_edge6;
+
+	public bool edge4_edge1;
+	public bool edge4_edge2;
+	public bool edge4_edge3;
+	public bool edge4_edge4;
+	public bool edge4_edge5;
+	public bool edge4_edge6;
+
+	public bool edge5_edge1;
+	public bool edge5_edge2;
+	public bool edge5_edge3;
+	public bool edge5_edge4;
+	public bool edge5_edge6;
+
+	public bool edge6_edge1;
+	public bool edge6_edge2;
+	public bool edge6_edge3;
+	public bool edge6_edge4;
+	public bool edge6_edge5;
+
+	private Color redColor = new Color(1, 0, 0);
 
 
 	public struct HexID{
@@ -73,107 +129,318 @@ public class BlankHex : MonoBehaviour {
 	HexID hexID;
 	public string ID;
 
-	void Start () {
-		//Debug.Log ("Hex slot created!");
 
+	void Start () {
 		gameManager = GameObject.FindGameObjectWithTag ("GameController");
 		
 		selected = false;
 		placed = false;
-		//hexID = "Slot";
 
 		//start of game hex slot
 		//there should only be 1 blank hex at start of realm creation, unless using some variant like SuperRealm (much further down the line)
 		if (gameObject.name == "Hex 0") {
 			hexID = new HexID (0, 0);
 		}
-
 		ID = hexID.GetPosA ().ToString () + ", " + hexID.GetPosB ().ToString ();
 	}
+
 
 	//player is preparing to select hex position for placement
 	void OnMouseEnter(){
 		if (!placed) {
-			gameObject.GetComponent<SpriteRenderer> ().color = new Color (0, 1, 0);
+			gameObject.GetComponent<SpriteRenderer> ().color = new Color (0, 1, 0);//green
 			selected = true;
 		}
 	}
 
+
 	//player decides not to place hex here, for now
 	void OnMouseExit(){
 		if (!placed) {
-			gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1);
+			gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1);//white
 			selected = false;
 		}
 	}
 		
 
-	public GameObject GetNeighbor1(){
-		return adjHex1;
-	}
+	public GameObject GetNeighbor1(){return adjHex1;}
+	public void SetNeighbor1(GameObject n){	adjHex1 = n;}
+	public GameObject GetNeighbor2(){return adjHex2;}
+	public void SetNeighbor2(GameObject n){adjHex2 = n;}
+	public GameObject GetNeighbor3(){return adjHex3;}
+	public void SetNeighbor3(GameObject n){adjHex3 = n;}
+	public GameObject GetNeighbor4(){return adjHex4;}
+	public void SetNeighbor4(GameObject n){adjHex4 = n;}
+	public GameObject GetNeighbor5(){return adjHex5;}
+	public void SetNeighbor5(GameObject n){adjHex5 = n;}
+	public GameObject GetNeighbor6(){return adjHex6;}
+	public void SetNeighbor6(GameObject n){adjHex6 = n;}
 
-	public void SetNeighbor1(GameObject n){
-		adjHex1 = n;
-	}
-
-	public GameObject GetNeighbor2(){
-		return adjHex2;
-	}
-
-	public void SetNeighbor2(GameObject n){
-		adjHex2 = n;
-	}
-
-	public GameObject GetNeighbor3(){
-		return adjHex3;
-	}
-
-	public void SetNeighbor3(GameObject n){
-		adjHex3 = n;
-	}
-
-	public GameObject GetNeighbor4(){
-		return adjHex4;
-	}
-
-	public void SetNeighbor4(GameObject n){
-		adjHex4 = n;
-	}
-
-	public GameObject GetNeighbor5(){
-		return adjHex5;
-	}
-
-	public void SetNeighbor5(GameObject n){
-		adjHex5 = n;
-	}
-
-	public GameObject GetNeighbor6(){
-		return adjHex6;
-	}
-
-	public void SetNeighbor6(GameObject n){
-		adjHex6 = n;
-	}
 
 	public bool HexIsPlaced(){
 		return placed;
 	}
 
+	public bool GetEdge1_Borderland(){return e1_Borderland;}
+	public bool GetEdge2_Borderland(){return e2_Borderland;}
+	public bool GetEdge3_Borderland(){return e3_Borderland;}
+	public bool GetEdge4_Borderland(){return e4_Borderland;}
+	public bool GetEdge5_Borderland(){return e5_Borderland;}
+	public bool GetEdge6_Borderland(){return e6_Borderland;}
+
+
 	//player will place hex tile in this selected spot, then automatically create new hex slots around it, if necessary
 	void OnMouseUp(){
-		if (selected && !placed) {
+		if (selected && !placed && gameManager.GetComponent<GameManager>().uiHexSelected) {
 
 			//There should only be 1 blank hex at the start of map creation.  From there that will create 6 new hexes.
 
 			//if placed next to < 2 adjacent tiles and there is more than just the starting hex slots, it's illegal
 			if (!IsTilePlacementLegal () && numberOfHexes > 7) {
-				gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 0.92f, 0.016f);
+				gameObject.GetComponent<SpriteRenderer> ().color = redColor;
 				return;
 			}
 
-			gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 0, 0);//TODO: replace with actual hex
-			placed = true;//aka filled, probably not necessary to have this if using the hexID string
+			//gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 0, 0);
+
+			//find the tile that is to be placed
+			foreach (GameObject a in GameObject.FindGameObjectWithTag("Canvas").GetComponent<UI_TileDisplay>().GetDisplayedUITiles()) {
+				if (a.GetComponent<Tile_UI> ().selected) {//found tile that is to be placed
+
+					//first tile placed must be the Borderland
+					if (gameObject.name == "Hex 0" && a.name != "Borderland") {
+						return;
+					}
+
+					//if not the Borderland (Hex 0), make sure roads align with edges of neighbor(s) hex tiles
+					if (gameObject.name != "Hex 0") {
+						//assign roads appropriately
+						roadAt1 = a.GetComponent<Tile_UI> ().roadAt1;
+						roadAt2 = a.GetComponent<Tile_UI> ().roadAt2;
+						roadAt3 = a.GetComponent<Tile_UI> ().roadAt3;
+						roadAt4 = a.GetComponent<Tile_UI> ().roadAt4;
+						roadAt5 = a.GetComponent<Tile_UI> ().roadAt5;
+						roadAt6 = a.GetComponent<Tile_UI> ().roadAt6;
+
+						edge1_edge2 = a.GetComponent<Tile_UI> ().edge1_edge2;
+						edge1_edge3 = a.GetComponent<Tile_UI> ().edge1_edge3;
+						edge1_edge4 = a.GetComponent<Tile_UI> ().edge1_edge4;
+						edge1_edge5 = a.GetComponent<Tile_UI> ().edge1_edge5;
+						edge1_edge6 = a.GetComponent<Tile_UI> ().edge1_edge6;
+
+						edge2_edge1 = a.GetComponent<Tile_UI> ().edge2_edge1;
+						edge2_edge3 = a.GetComponent<Tile_UI> ().edge2_edge3;
+						edge2_edge4 = a.GetComponent<Tile_UI> ().edge2_edge4;
+						edge2_edge5 = a.GetComponent<Tile_UI> ().edge2_edge5;
+						edge2_edge6 = a.GetComponent<Tile_UI> ().edge2_edge6;
+
+						edge3_edge1 = a.GetComponent<Tile_UI> ().edge3_edge1;
+						edge3_edge2 = a.GetComponent<Tile_UI> ().edge3_edge2;
+						edge3_edge4 = a.GetComponent<Tile_UI> ().edge3_edge4;
+						edge3_edge5 = a.GetComponent<Tile_UI> ().edge3_edge5;
+						edge3_edge6 = a.GetComponent<Tile_UI> ().edge3_edge6;
+
+						edge4_edge1 = a.GetComponent<Tile_UI> ().edge4_edge1;
+						edge4_edge2 = a.GetComponent<Tile_UI> ().edge4_edge2;
+						edge4_edge3 = a.GetComponent<Tile_UI> ().edge4_edge3;
+						edge4_edge5 = a.GetComponent<Tile_UI> ().edge4_edge5;
+						edge4_edge6 = a.GetComponent<Tile_UI> ().edge4_edge6;
+
+						edge5_edge1 = a.GetComponent<Tile_UI> ().edge5_edge1;
+						edge5_edge2 = a.GetComponent<Tile_UI> ().edge5_edge2;
+						edge5_edge3 = a.GetComponent<Tile_UI> ().edge5_edge3;
+						edge5_edge4 = a.GetComponent<Tile_UI> ().edge5_edge4;
+						edge5_edge6 = a.GetComponent<Tile_UI> ().edge5_edge6;
+
+						edge6_edge1 = a.GetComponent<Tile_UI> ().edge6_edge1;
+						edge6_edge2 = a.GetComponent<Tile_UI> ().edge6_edge2;
+						edge6_edge3 = a.GetComponent<Tile_UI> ().edge6_edge3;
+						edge6_edge4 = a.GetComponent<Tile_UI> ().edge6_edge4;
+						edge6_edge5 = a.GetComponent<Tile_UI> ().edge6_edge5;
+
+						//mark if it's a 6-clearing tile
+						sixClearingTile = a.GetComponent<Tile_UI> ().sixClearingTile;
+
+						//now check the roads of the neighbor hex tiles
+						if (sixClearingTile == false) {
+							if (TravelTilePlacementCheck () == false) {
+								return;//check failed, placement is illegal
+							}
+						} else {
+							if (SixClearingTilePlacementCheck () == false) {
+								return;//check failed, placement is illegal
+							}
+						}
+
+					} else {//it's the Borderlands, all edges have roads
+						roadAt1 = true;
+						roadAt2 = true;
+						roadAt3 = true;
+						roadAt4 = true;
+						roadAt5 = true;
+						roadAt6 = true;
+						e1_Borderland = true;
+						e2_Borderland = true;
+						e3_Borderland = true;
+						e4_Borderland = true;
+						e5_Borderland = true;
+						e6_Borderland = true;
+					}
+					//Debug.Log ("Placement is legal.");
+
+					//set tile sprite
+					gameObject.GetComponent<SpriteRenderer> ().sprite = a.GetComponent<Image> ().sprite;
+					gameObject.name = a.name;
+
+					//rotate tile to correct orientation if necessary
+					gameObject.transform.Rotate(new Vector3(0, 0, -60 * (a.GetComponent<Tile_UI>().GetRotation() - 1)));
+
+					//because scaling of sprite itself is off, rescale gameobject to fit the grid appropriately
+					gameObject.transform.localScale = new Vector3 (1, 1, 1);
+
+					gameManager.GetComponent<GameManager> ().uiHexSelected = false;//deselect
+					GameObject.FindGameObjectWithTag ("Canvas").GetComponent<UI_TileDisplay> ().GetDisplayedUITiles ().Remove (a);//remove UI tile from list
+					Destroy (a);//destroy UI tile so that only the non-UI version exists, on the map
+					break;
+				}
+			}
+
+			//now update neighbors in regards to paths leading back to Borderland, if necessary
+			//TODO: Improve this via pathfinding.  If 1 tile ends up updated, check the neighbors of that tile and update them, and continue until all necessary tiles are updated.  The ID may come in handy for this.
+			if (adjHex1 != null) {
+				if (e1_Borderland && adjHex1.GetComponent<BlankHex> ().HexIsPlaced () && adjHex1.GetComponent<BlankHex> ().roadAt4 && adjHex1.GetComponent<BlankHex> ().e4_Borderland == false) {
+					Debug.Log ("Updating Borderland road confirmation on edge 4 of " + adjHex1.name);
+					adjHex1.GetComponent<BlankHex> ().e4_Borderland = true;
+					if (adjHex1.GetComponent<BlankHex> ().edge4_edge1 && !adjHex1.GetComponent<BlankHex> ().e1_Borderland) {
+						adjHex1.GetComponent<BlankHex> ().e1_Borderland = true;
+					}
+					if (adjHex1.GetComponent<BlankHex> ().edge4_edge2 && !adjHex1.GetComponent<BlankHex> ().e2_Borderland) {
+						adjHex1.GetComponent<BlankHex> ().e2_Borderland = true;
+					}
+					if (adjHex1.GetComponent<BlankHex> ().edge4_edge3 && !adjHex1.GetComponent<BlankHex> ().e3_Borderland) {
+						adjHex1.GetComponent<BlankHex> ().e3_Borderland = true;
+					}
+					if (adjHex1.GetComponent<BlankHex> ().edge4_edge5 && !adjHex1.GetComponent<BlankHex> ().e5_Borderland) {
+						adjHex1.GetComponent<BlankHex> ().e5_Borderland = true;
+					}
+					if (adjHex1.GetComponent<BlankHex> ().edge4_edge6 && !adjHex1.GetComponent<BlankHex> ().e6_Borderland) {
+						adjHex1.GetComponent<BlankHex> ().e6_Borderland = true;
+					}
+				}
+			}
+			if (adjHex2 != null) {
+				Debug.Log ("Checking " + adjHex2.name);
+				if (e2_Borderland && adjHex2.GetComponent<BlankHex> ().HexIsPlaced () && adjHex2.GetComponent<BlankHex> ().roadAt5 && adjHex2.GetComponent<BlankHex> ().e5_Borderland == false) {
+					Debug.Log ("Updating Borderland road confirmation on edge 5 of " + adjHex1.name);
+					adjHex2.GetComponent<BlankHex> ().e5_Borderland = true;
+					if (adjHex2.GetComponent<BlankHex> ().edge5_edge1 && !adjHex2.GetComponent<BlankHex> ().e1_Borderland) {
+						adjHex2.GetComponent<BlankHex> ().e1_Borderland = true;
+					}
+					if (adjHex2.GetComponent<BlankHex> ().edge5_edge2 && !adjHex2.GetComponent<BlankHex> ().e2_Borderland) {
+						adjHex2.GetComponent<BlankHex> ().e2_Borderland = true;
+					}
+					if (adjHex2.GetComponent<BlankHex> ().edge5_edge3 && !adjHex2.GetComponent<BlankHex> ().e3_Borderland) {
+						adjHex2.GetComponent<BlankHex> ().e3_Borderland = true;
+					}
+					if (adjHex2.GetComponent<BlankHex> ().edge5_edge4 && !adjHex2.GetComponent<BlankHex> ().e4_Borderland) {
+						adjHex2.GetComponent<BlankHex> ().e4_Borderland = true;
+					}
+					if (adjHex2.GetComponent<BlankHex> ().edge5_edge6 && !adjHex2.GetComponent<BlankHex> ().e6_Borderland) {
+						adjHex2.GetComponent<BlankHex> ().e6_Borderland = true;
+					}
+				}
+			}
+			if (adjHex3 != null) {
+				if (e3_Borderland && adjHex3.GetComponent<BlankHex> ().HexIsPlaced () && adjHex3.GetComponent<BlankHex> ().roadAt6 && adjHex3.GetComponent<BlankHex> ().e6_Borderland == false) {
+					Debug.Log ("Updating Borderland road confirmation on edge 6 of " + adjHex1.name);
+					adjHex3.GetComponent<BlankHex> ().e6_Borderland = true;
+					if (adjHex3.GetComponent<BlankHex> ().edge6_edge1 && !adjHex3.GetComponent<BlankHex> ().e1_Borderland) {
+						adjHex3.GetComponent<BlankHex> ().e1_Borderland = true;
+					}
+					if (adjHex3.GetComponent<BlankHex> ().edge6_edge2 && !adjHex3.GetComponent<BlankHex> ().e2_Borderland) {
+						adjHex3.GetComponent<BlankHex> ().e2_Borderland = true;
+					}
+					if (adjHex3.GetComponent<BlankHex> ().edge6_edge3 && !adjHex3.GetComponent<BlankHex> ().e3_Borderland) {
+						adjHex3.GetComponent<BlankHex> ().e3_Borderland = true;
+					}
+					if (adjHex3.GetComponent<BlankHex> ().edge6_edge4 && !adjHex3.GetComponent<BlankHex> ().e4_Borderland) {
+						adjHex3.GetComponent<BlankHex> ().e4_Borderland = true;
+					}
+					if (adjHex3.GetComponent<BlankHex> ().edge6_edge5 && !adjHex3.GetComponent<BlankHex> ().e5_Borderland) {
+						adjHex3.GetComponent<BlankHex> ().e5_Borderland = true;
+					}
+				}
+			}
+			if (adjHex4 != null) {
+				if (e4_Borderland && adjHex4.GetComponent<BlankHex> ().HexIsPlaced () && adjHex4.GetComponent<BlankHex> ().roadAt1 && adjHex4.GetComponent<BlankHex> ().e1_Borderland == false) {
+					Debug.Log ("Updating Borderland road confirmation on edge 1 of " + adjHex1.name);
+					adjHex4.GetComponent<BlankHex> ().e1_Borderland = true;
+					if (adjHex4.GetComponent<BlankHex> ().edge1_edge2 && !adjHex4.GetComponent<BlankHex> ().e2_Borderland) {
+						adjHex4.GetComponent<BlankHex> ().e2_Borderland = true;
+					}
+					if (adjHex4.GetComponent<BlankHex> ().edge1_edge3 && !adjHex4.GetComponent<BlankHex> ().e3_Borderland) {
+						adjHex4.GetComponent<BlankHex> ().e3_Borderland = true;
+					}
+					if (adjHex4.GetComponent<BlankHex> ().edge1_edge4 && !adjHex4.GetComponent<BlankHex> ().e4_Borderland) {
+						adjHex4.GetComponent<BlankHex> ().e4_Borderland = true;
+					}
+					if (adjHex4.GetComponent<BlankHex> ().edge1_edge5 && !adjHex4.GetComponent<BlankHex> ().e5_Borderland) {
+						adjHex4.GetComponent<BlankHex> ().e5_Borderland = true;
+					}
+					if (adjHex4.GetComponent<BlankHex> ().edge1_edge6 && !adjHex4.GetComponent<BlankHex> ().e6_Borderland) {
+						adjHex4.GetComponent<BlankHex> ().e6_Borderland = true;
+					}
+				}
+			}
+			if (adjHex5 != null) {
+				if (e5_Borderland && adjHex5.GetComponent<BlankHex> ().HexIsPlaced () && adjHex5.GetComponent<BlankHex> ().roadAt2 && adjHex5.GetComponent<BlankHex> ().e2_Borderland == false) {
+					Debug.Log ("Updating Borderland road confirmation on edge 2 of " + adjHex1.name);
+					adjHex5.GetComponent<BlankHex> ().e2_Borderland = true;
+					if (adjHex5.GetComponent<BlankHex> ().edge2_edge1 && !adjHex5.GetComponent<BlankHex> ().e1_Borderland) {
+						adjHex5.GetComponent<BlankHex> ().e1_Borderland = true;
+					}
+					if (adjHex5.GetComponent<BlankHex> ().edge2_edge3 && !adjHex5.GetComponent<BlankHex> ().e3_Borderland) {
+						adjHex5.GetComponent<BlankHex> ().e3_Borderland = true;
+					}
+					if (adjHex5.GetComponent<BlankHex> ().edge2_edge4 && !adjHex5.GetComponent<BlankHex> ().e4_Borderland) {
+						adjHex5.GetComponent<BlankHex> ().e4_Borderland = true;
+					}
+					if (adjHex5.GetComponent<BlankHex> ().edge2_edge5 && !adjHex5.GetComponent<BlankHex> ().e5_Borderland) {
+						adjHex5.GetComponent<BlankHex> ().e5_Borderland = true;
+					}
+					if (adjHex5.GetComponent<BlankHex> ().edge2_edge6 && !adjHex5.GetComponent<BlankHex> ().e6_Borderland) {
+						adjHex5.GetComponent<BlankHex> ().e6_Borderland = true;
+					}
+				}
+			}
+			if (adjHex6 != null) {
+				if (e6_Borderland && adjHex6.GetComponent<BlankHex> ().HexIsPlaced () && adjHex6.GetComponent<BlankHex> ().roadAt3 && adjHex6.GetComponent<BlankHex> ().e3_Borderland == false) {
+					Debug.Log ("Updating Borderland road confirmation on edge 3 of " + adjHex1.name);
+					adjHex6.GetComponent<BlankHex> ().e3_Borderland = true;
+					if (adjHex6.GetComponent<BlankHex> ().edge3_edge1 && !adjHex6.GetComponent<BlankHex> ().e1_Borderland) {
+						adjHex6.GetComponent<BlankHex> ().e1_Borderland = true;
+					}
+					if (adjHex6.GetComponent<BlankHex> ().edge3_edge2 && !adjHex6.GetComponent<BlankHex> ().e3_Borderland) {
+						adjHex6.GetComponent<BlankHex> ().e2_Borderland = true;
+					}
+					if (adjHex6.GetComponent<BlankHex> ().edge3_edge4 && !adjHex6.GetComponent<BlankHex> ().e4_Borderland) {
+						adjHex6.GetComponent<BlankHex> ().e4_Borderland = true;
+					}
+					if (adjHex6.GetComponent<BlankHex> ().edge3_edge5 && !adjHex6.GetComponent<BlankHex> ().e5_Borderland) {
+						adjHex6.GetComponent<BlankHex> ().e5_Borderland = true;
+					}
+					if (adjHex6.GetComponent<BlankHex> ().edge3_edge6 && !adjHex6.GetComponent<BlankHex> ().e6_Borderland) {
+						adjHex6.GetComponent<BlankHex> ().e6_Borderland = true;
+					}
+				}
+			}
+
+			//The color of the sprite remains green due to OnMouseEnter function.  Change it back to white here.
+			gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
+
+			//gameObject.GetComponent<SpriteRenderer> ().sprite = GameObject.FindGameObjectWithTag("Canvas").GetComponent<UI_Map>().GetDisplayedUITiles();
+
+			placed = true;//aka filled
 
 			//tracks which new hex slots were placed as a result of the new hex tile (this gameobject)
 			GameObject newAdjHex1 = null;
@@ -381,7 +648,7 @@ public class BlankHex : MonoBehaviour {
 	}
 
 
-	//should not be called unless there are at least 5 (?) hex tiles in play
+
 	void CheckForAdjacentSlots(GameObject hexSlotA){
 	if (hexSlotA.GetComponent<BlankHex> ().GetNeighbor1() == null || hexSlotA.GetComponent<BlankHex> ().GetNeighbor2() == null || hexSlotA.GetComponent<BlankHex> ().GetNeighbor3() == null ||
 		hexSlotA.GetComponent<BlankHex> ().GetNeighbor4() == null || hexSlotA.GetComponent<BlankHex> ().GetNeighbor5() == null || hexSlotA.GetComponent<BlankHex> ().GetNeighbor6() == null) {
@@ -430,7 +697,7 @@ public class BlankHex : MonoBehaviour {
 	}
 
 
-	//check if new hex tile placement is legal
+	//check if new hex tile placement is legal based on # of neighbors (must be at least 2 neighbors)
 	bool IsTilePlacementLegal(){
 		int tileNeighbors = 0;
 		if (GetNeighbor1 () != null && GetNeighbor1 ().GetComponent<BlankHex> ().HexIsPlaced ()) { 
@@ -451,12 +718,472 @@ public class BlankHex : MonoBehaviour {
 		if (GetNeighbor6 () != null && GetNeighbor6 ().GetComponent<BlankHex> ().HexIsPlaced ()) { 
 			tileNeighbors++;
 		}
-
 		if (tileNeighbors >= 2) {
 			return true;
 		} else {
 			return false;
 		}
+	}
+
+
+	//check if non-6-clearing tile placement is legal based on roads of connected tiles leading back to the Borderland
+	private bool TravelTilePlacementCheck(){
+		bool oneNeighborAdjacentToBorderland = false;
+		if (adjHex1 != null) {
+			if (adjHex1.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex1.GetComponent<BlankHex> ().roadAt4 && roadAt1) || (!adjHex1.GetComponent<BlankHex> ().roadAt4 && !roadAt1)) {
+					if (adjHex1.GetComponent<BlankHex> ().GetEdge4_Borderland ()) {//check if adjacent hex connects to Borderland from this hex's connected edge
+						oneNeighborAdjacentToBorderland = true;
+						e1_Borderland = true;
+						if (edge1_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge1_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge1_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge1_edge5) {
+							e5_Borderland = true;
+						}
+						if (edge1_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 1.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;//placement is illegal, end function
+				}
+			}
+		}
+		if (adjHex2 != null) {
+			if (adjHex2.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex2.GetComponent<BlankHex> ().roadAt5 && roadAt2) || (!adjHex2.GetComponent<BlankHex> ().roadAt5 && !roadAt2)) {
+					if (adjHex2.GetComponent<BlankHex> ().GetEdge5_Borderland ()) {
+						oneNeighborAdjacentToBorderland = true;
+						e2_Borderland = true;
+						if (edge2_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge2_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge2_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge2_edge5) {
+							e5_Borderland = true;
+						}
+						if (edge2_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 2.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;//placement is illegal, end function
+				}
+			}
+		}
+		if (adjHex3 != null) {
+			if (adjHex3.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex3.GetComponent<BlankHex> ().roadAt6 && roadAt3) || (!adjHex3.GetComponent<BlankHex> ().roadAt6 && !roadAt3)) {
+					if (adjHex3.GetComponent<BlankHex> ().GetEdge6_Borderland ()) {
+						oneNeighborAdjacentToBorderland = true;
+						e3_Borderland = true;
+						if (edge3_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge3_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge3_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge3_edge5) {
+							e5_Borderland = true;
+						}
+						if (edge3_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 3.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;
+				}
+			}
+		}
+		if (adjHex4 != null) {
+			if (adjHex4.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex4.GetComponent<BlankHex> ().roadAt1 && roadAt4) || (!adjHex4.GetComponent<BlankHex> ().roadAt1 && !roadAt4)) {
+					if (adjHex4.GetComponent<BlankHex> ().GetEdge1_Borderland ()) {
+						oneNeighborAdjacentToBorderland = true;
+						e4_Borderland = true;
+						if (edge4_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge4_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge4_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge4_edge5) {
+							e5_Borderland = true;
+						}
+						if (edge4_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 4.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;
+				}
+			}
+		}
+		if (adjHex5 != null) {
+			if (adjHex5.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex5.GetComponent<BlankHex> ().roadAt2 && roadAt5) || (!adjHex5.GetComponent<BlankHex> ().roadAt2 && !roadAt5)) {
+					if (adjHex5.GetComponent<BlankHex> ().GetEdge2_Borderland ()) {
+						oneNeighborAdjacentToBorderland = true;
+						e5_Borderland = true;
+						if (edge5_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge5_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge5_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge5_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge5_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 5.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;
+				}
+			}
+		}
+		if (adjHex6 != null) {
+			if (adjHex6.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex6.GetComponent<BlankHex> ().roadAt3 && roadAt6) || (!adjHex6.GetComponent<BlankHex> ().roadAt3 && !roadAt6)) {
+					if (adjHex6.GetComponent<BlankHex> ().GetEdge3_Borderland ()) {
+						oneNeighborAdjacentToBorderland = true;
+						e6_Borderland = true;
+						if (edge6_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge6_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge6_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge6_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge6_edge5) {
+							e5_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 6.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;
+				}
+			}
+		}
+		if (oneNeighborAdjacentToBorderland == false) {
+			Debug.Log ("Illegal placement.  No neighbor has a path connecting to this hex that leads back to the Borderland.");
+			gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+			return false;//placement is illegal, end function
+		}
+		return true;
+	}
+
+
+
+	//check if 6-clearing tile placement is legal based on roads of connected tiles leading back to the Borderland; currently only really matters with the Cliff and Ledge tiles.
+	private bool SixClearingTilePlacementCheck(){
+		if (adjHex1 != null) {
+			if (adjHex1.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex1.GetComponent<BlankHex> ().roadAt4 && roadAt1) || (!adjHex1.GetComponent<BlankHex> ().roadAt4 && !roadAt1)) {
+					if (adjHex1.GetComponent<BlankHex> ().GetEdge4_Borderland ()) {//check if adjacent hex connects to Borderland from this hex's connected edge
+						e1_Borderland = true;
+						if (edge1_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge1_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge1_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge1_edge5) {
+							e5_Borderland = true;
+						}
+						if (edge1_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 1.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;//placement is illegal, end function
+				}
+			}
+		}
+		if (adjHex2 != null) {
+			if (adjHex2.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex2.GetComponent<BlankHex> ().roadAt5 && roadAt2) || (!adjHex2.GetComponent<BlankHex> ().roadAt5 && !roadAt2)) {
+					if (adjHex2.GetComponent<BlankHex> ().GetEdge5_Borderland ()) {
+						e2_Borderland = true;
+						if (edge2_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge2_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge2_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge2_edge5) {
+							e5_Borderland = true;
+						}
+						if (edge2_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 2.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;//placement is illegal, end function
+				}
+			}
+		}
+		if (adjHex3 != null) {
+			if (adjHex3.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex3.GetComponent<BlankHex> ().roadAt6 && roadAt3) || (!adjHex3.GetComponent<BlankHex> ().roadAt6 && !roadAt3)) {
+					if (adjHex3.GetComponent<BlankHex> ().GetEdge6_Borderland ()) {
+						e3_Borderland = true;
+						if (edge3_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge3_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge3_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge3_edge5) {
+							e5_Borderland = true;
+						}
+						if (edge3_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 3.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;//placement is illegal, end function
+				}
+			}
+		}
+		if (adjHex4 != null) {
+			if (adjHex4.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex4.GetComponent<BlankHex> ().roadAt1 && roadAt4) || (!adjHex4.GetComponent<BlankHex> ().roadAt1 && !roadAt4)) {
+					if (adjHex4.GetComponent<BlankHex> ().GetEdge1_Borderland ()) {
+						e4_Borderland = true;
+						if (edge4_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge4_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge4_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge4_edge5) {
+							e5_Borderland = true;
+						}
+						if (edge4_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 4.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;//placement is illegal, end function
+				}
+			}
+		}
+		if (adjHex5 != null) {
+			if (adjHex5.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex5.GetComponent<BlankHex> ().roadAt2 && roadAt5) || (!adjHex5.GetComponent<BlankHex> ().roadAt2 && !roadAt5)) {
+					if (adjHex5.GetComponent<BlankHex> ().GetEdge2_Borderland ()) {
+						e5_Borderland = true;
+						if (edge5_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge5_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge5_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge5_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge5_edge6) {
+							e6_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 5.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;//placement is illegal, end function
+				}
+			}
+		}
+		if (adjHex6 != null) {
+			if (adjHex6.GetComponent<BlankHex> ().HexIsPlaced ()) {
+				if ((adjHex6.GetComponent<BlankHex> ().roadAt3 && roadAt6) || (!adjHex6.GetComponent<BlankHex> ().roadAt3 && !roadAt6)) {
+					if (adjHex6.GetComponent<BlankHex> ().GetEdge3_Borderland ()) {
+						e6_Borderland = true;
+						if (edge6_edge1) {
+							e1_Borderland = true;
+						}
+						if (edge6_edge2) {
+							e2_Borderland = true;
+						}
+						if (edge6_edge3) {
+							e3_Borderland = true;
+						}
+						if (edge6_edge4) {
+							e4_Borderland = true;
+						}
+						if (edge6_edge5) {
+							e5_Borderland = true;
+						}
+					}
+				} else {
+					Debug.Log ("Illegal to place adjacent to neighbor 6.");
+					gameObject.GetComponent<SpriteRenderer> ().color = redColor;
+					return false;//placement is illegal, end function
+				}
+			}
+		}
+
+		if (roadAt1 && e1_Borderland == false) {
+			if (edge1_edge2 && e2_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge1_edge3 && e3_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge1_edge4 && e4_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge1_edge5 && e5_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge1_edge6 && e6_Borderland) {
+				//do nothing, placement is legal so far
+			} else {
+				return false;//placement is illegal
+			}
+		}
+
+		if (roadAt2 && e2_Borderland == false) {
+			if (edge2_edge1 && e1_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge2_edge3 && e3_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge2_edge4 && e4_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge2_edge5 && e5_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge2_edge6 && e6_Borderland) {
+				//do nothing, placement is legal so far
+			} else {
+				return false;//placement is illegal
+			}
+		}
+
+		if (roadAt3 && e3_Borderland == false) {
+			if (edge3_edge1 && e1_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge3_edge2 && e2_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge3_edge4 && e4_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge3_edge5 && e5_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge3_edge6 && e6_Borderland) {
+				//do nothing, placement is legal so far
+			} else {
+				return false;//placement is illegal
+			}
+		}
+
+		if (roadAt4 && e4_Borderland == false) {
+			if (edge4_edge1 && e1_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge4_edge2 && e2_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge4_edge3 && e3_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge4_edge5 && e5_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge4_edge6 && e6_Borderland) {
+				//do nothing, placement is legal so far
+			} else {
+				return false;//placement is illegal
+			}
+		}
+
+		if (roadAt5 && e5_Borderland == false) {
+			if (edge5_edge1 && e1_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge5_edge2 && e2_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge5_edge3 && e3_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge5_edge4 && e4_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge5_edge6 && e6_Borderland) {
+				//do nothing, placement is legal so far
+			} else {
+				return false;//placement is illegal
+			}
+		}
+
+		if (roadAt6 && e6_Borderland == false) {
+			if (edge6_edge1 && e1_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge6_edge2 && e2_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge6_edge3 && e3_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge6_edge4 && e4_Borderland) {
+				//do nothing, placement is legal so far
+			} else if (edge6_edge5 && e5_Borderland) {
+				//do nothing, placement is legal so far
+			} else {
+				return false;//placement is illegal
+			}
+		}
+		return true;
+	}
+
+
+	private void UpdateNeighborPathsToBorderland(BlankHex neighborHex){
 
 	}
 }

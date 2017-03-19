@@ -9,8 +9,13 @@ public class GameManager : MonoBehaviour {
 	public string sceneName;
 	public string status;
 	public GameObject hexSlot;//prefab of blank white hex slot
+	public bool uiHexSelected {get; set;}
 
-	public List<GameObject> realmMap;//TODO: make private
+	public List<GameObject> hexMap = new List<GameObject>();//list of ALL hexes, whether they are tiles or just slots
+	public List<GameObject> gameTiles = new List<GameObject>();//list of tile gameobject to replace (or add onto) blank hexes
+	public List<GameObject> uiTiles = new List<GameObject>();
+
+
 
 	void Awake() {
 		DontDestroyOnLoad(transform.gameObject);
@@ -29,12 +34,16 @@ public class GameManager : MonoBehaviour {
 
 			GameObject[] hexSlots = GameObject.FindGameObjectsWithTag ("Tile");
 			foreach(GameObject a in hexSlots){//add starting hex slots to realmMap list
-				realmMap.Add (a);
+				hexMap.Add (a);
 			}
 		}
 
-		if (realmMap.Capacity == 0) {
-			Debug.LogError ("No hex slots found and put into realmMap in GameManager.  Closing Application.");
+		if (hexMap.Capacity == 0) {
+			Debug.LogError ("No hex slots found and put into hexMap in GameManager.  Closing Application.");
+			Application.Quit ();
+		}
+		if (gameTiles.Capacity == 0) {
+			Debug.LogError ("No hex slots found and put into gameTiles in GameManager.  Closing Application.");
 			Application.Quit ();
 		}
 	}
@@ -55,14 +64,26 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void AddToRealmMap(GameObject hex){
-		realmMap.Add (hex);
+		hexMap.Add (hex);
 	}
 
 	public List<GameObject> GetRealmMap(){
-		return realmMap;
+		return hexMap;
+	}
+
+	public List<GameObject> GetGameTiles(){
+		return gameTiles;
+	}
+
+	public List<GameObject> GetUITiles(){
+		return uiTiles;
 	}
 
 	public GameObject GetHexSlot(){
 		return hexSlot;
+	}
+
+	public void HexToTile(GameObject hex){
+		//TODO: make code that converts image of selected hex to sprite of tile, and add in clearings (ie sphere colliders to mark their positions)
 	}
 }
