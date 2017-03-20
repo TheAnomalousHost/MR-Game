@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class BlankHex : MonoBehaviour {
 
@@ -36,9 +37,9 @@ public class BlankHex : MonoBehaviour {
 	//RaycastHit hit;
 
 	bool selected;//hex position is selected for placement
-	public bool placed;//hex position filled, can no longer be selected
+	bool placed;//hex position filled, can no longer be selected
 
-	GameObject gameManager;
+	static GameObject gameManager;
 	public static int numberOfHexes = 1;
 
 	const float shiftX = 3.75f;
@@ -51,6 +52,13 @@ public class BlankHex : MonoBehaviour {
 	public GameObject adjHex4;//neighbor4;
 	public GameObject adjHex5;//neighbor5;
 	public GameObject adjHex6;//neighbor6;
+
+	public bool roadAt1;//true if there is a road leading out of edge 1
+	public bool roadAt2;
+	public bool roadAt3;
+	public bool roadAt4;
+	public bool roadAt5;
+	public bool roadAt6;
 
 
 	public struct HexID{
@@ -94,7 +102,7 @@ public class BlankHex : MonoBehaviour {
 	//player is preparing to select hex position for placement
 	void OnMouseEnter(){
 		if (!placed) {
-			gameObject.GetComponent<SpriteRenderer> ().color = new Color (0, 1, 0);
+			gameObject.GetComponent<SpriteRenderer> ().color = new Color (0, 1, 0);//green
 			selected = true;
 		}
 	}
@@ -102,7 +110,7 @@ public class BlankHex : MonoBehaviour {
 	//player decides not to place hex here, for now
 	void OnMouseExit(){
 		if (!placed) {
-			gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1);
+			gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 1, 1);//white
 			selected = false;
 		}
 	}
@@ -162,7 +170,7 @@ public class BlankHex : MonoBehaviour {
 
 	//player will place hex tile in this selected spot, then automatically create new hex slots around it, if necessary
 	void OnMouseUp(){
-		if (selected && !placed) {
+		if (selected && !placed && gameManager.GetComponent<GameManager>().uiHexSelected) {
 
 			//There should only be 1 blank hex at the start of map creation.  From there that will create 6 new hexes.
 
@@ -172,8 +180,127 @@ public class BlankHex : MonoBehaviour {
 				return;
 			}
 
-			gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 0, 0);//TODO: replace with actual hex
-			placed = true;//aka filled, probably not necessary to have this if using the hexID string
+			//gameObject.GetComponent<SpriteRenderer> ().color = new Color (1, 0, 0);
+
+			//find the tile that is to be placed
+			foreach (GameObject a in GameObject.FindGameObjectWithTag("Canvas").GetComponent<UI_TileDisplay>().GetDisplayedUITiles()) {
+				if (a.GetComponent<Tile_UI> ().selected) {//found tile that is to be placed
+
+					//first tile placed must be the Borderland
+					if (gameObject.name == "Hex 0" && a.name != "Borderland") {
+						return;
+					}
+
+					//if not the Borderland (Hex 0), make sure roads align with edges of neighbor(s) hex tiles
+					if (gameObject.name != "Hex 0") {
+						//assign roads appropriately
+						roadAt1 = a.GetComponent<Tile_UI> ().roadAt1;
+						roadAt2 = a.GetComponent<Tile_UI> ().roadAt2;
+						roadAt3 = a.GetComponent<Tile_UI> ().roadAt3;
+						roadAt4 = a.GetComponent<Tile_UI> ().roadAt4;
+						roadAt5 = a.GetComponent<Tile_UI> ().roadAt5;
+						roadAt6 = a.GetComponent<Tile_UI> ().roadAt6;
+
+						//now check the roads of the neighbor hex tiles
+						if (adjHex1 != null) {
+							if (adjHex1.GetComponent<BlankHex> ().HexIsPlaced ()) {
+								if ((adjHex1.GetComponent<BlankHex> ().roadAt4 && roadAt1) || (!adjHex1.GetComponent<BlankHex> ().roadAt4 && !roadAt1)) {
+									//placement is legal, continue with rest of function
+									Debug.Log ("Legal to place adjacent to neighbor 1.");
+								} else {
+									Debug.Log ("Illegal to place adjacent to neighbor 1.");
+									return;//placement is illegal, end function
+								}
+							}
+						}
+						if (adjHex2 != null) {
+							if (adjHex2.GetComponent<BlankHex> ().HexIsPlaced ()) {
+								if ((adjHex2.GetComponent<BlankHex> ().roadAt5 && roadAt2) || (!adjHex2.GetComponent<BlankHex> ().roadAt5 && !roadAt2)) {
+									//placement is legal, continue with rest of function
+									Debug.Log ("Legal to place adjacent to neighbor 2.");
+								} else {
+									Debug.Log ("Illegal to place adjacent to neighbor 2.");
+									return;//placement is illegal, end function
+								}
+							}
+						}
+						if (adjHex3 != null) {
+							if (adjHex3.GetComponent<BlankHex> ().HexIsPlaced ()) {
+								if ((adjHex3.GetComponent<BlankHex> ().roadAt6 && roadAt3) || (!adjHex3.GetComponent<BlankHex> ().roadAt6 && !roadAt3)) {
+									//placement is legal, continue with rest of function
+									Debug.Log ("Legal to place adjacent to neighbor 3.");
+								} else {
+									Debug.Log ("Illegal to place adjacent to neighbor 3.");
+									return;//placement is illegal, end function
+								}
+							}
+						}
+						if (adjHex4 != null) {
+							if (adjHex4.GetComponent<BlankHex> ().HexIsPlaced ()) {
+								if ((adjHex4.GetComponent<BlankHex> ().roadAt1 && roadAt4) || (!adjHex4.GetComponent<BlankHex> ().roadAt1 && !roadAt4)) {
+									//placement is legal, continue with rest of function
+									Debug.Log ("Legal to place adjacent to neighbor 4.");
+								} else {
+									Debug.Log ("Illegal to place adjacent to neighbor 4.");
+									return;//placement is illegal, end function
+								}
+							}
+						}
+						if (adjHex5 != null) {
+							if (adjHex5.GetComponent<BlankHex> ().HexIsPlaced ()) {
+								if ((adjHex5.GetComponent<BlankHex> ().roadAt2 && roadAt5) || (!adjHex5.GetComponent<BlankHex> ().roadAt2 && !roadAt5)) {
+									//placement is legal, continue with rest of function
+									Debug.Log ("Legal to place adjacent to neighbor 5.");
+								} else {
+									Debug.Log ("Illegal to place adjacent to neighbor 5.");
+									return;//placement is illegal, end function
+								}
+							}
+						}
+						if (adjHex6 != null) {
+							if (adjHex6.GetComponent<BlankHex> ().HexIsPlaced ()) {
+								if ((adjHex6.GetComponent<BlankHex> ().roadAt3 && roadAt6) || (!adjHex6.GetComponent<BlankHex> ().roadAt3 && !roadAt6)) {
+									//placement is legal, continue with rest of function
+									Debug.Log ("Legal to place adjacent to neighbor 6.");
+								} else {
+									Debug.Log ("Illegal to place adjacent to neighbor 6.");
+									return;//placement is illegal, end function
+								}
+							}
+						}
+					} else {//it's the Borderlands, all edges have roads
+						roadAt1 = true;
+						roadAt2 = true;
+						roadAt3 = true;
+						roadAt4 = true;
+						roadAt5 = true;
+						roadAt6 = true;
+					}
+					Debug.Log ("Placement is legal.");
+
+					//set tile sprite
+					gameObject.GetComponent<SpriteRenderer> ().sprite = a.GetComponent<Image> ().sprite;
+					gameObject.name = a.name;
+
+					//rotate tile to correct orientation if necessary
+					gameObject.transform.Rotate(new Vector3(0, 0, -60 * (a.GetComponent<Tile_UI>().GetRotation() - 1)));
+
+					//because scaling of sprite itself is off, rescale gameobject to fit the grid appropriately
+					gameObject.transform.localScale = new Vector3 (1, 1, 1);
+
+					gameManager.GetComponent<GameManager> ().uiHexSelected = false;
+					GameObject.FindGameObjectWithTag ("Canvas").GetComponent<UI_TileDisplay> ().GetDisplayedUITiles ().Remove (a);
+					Destroy (a);
+					break;
+				}
+			}
+
+			//The color of the sprite remains green due to OnMouseEnter function.  Change it back to white here.
+			gameObject.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f);
+
+			//gameObject.GetComponent<SpriteRenderer> ().sprite = GameObject.FindGameObjectWithTag("Canvas").GetComponent<UI_Map>().GetDisplayedUITiles();
+
+			placed = true;//aka filled
 
 			//tracks which new hex slots were placed as a result of the new hex tile (this gameobject)
 			GameObject newAdjHex1 = null;
